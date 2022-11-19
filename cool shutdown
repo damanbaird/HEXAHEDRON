@@ -1,0 +1,44 @@
+[controller_fan Main_Power]
+pin: PB0
+max_power: 1
+off_below: 1
+shutdown_speed: 0 # Power off when shutdown
+idle_timeout: 1 # Fast timeout unless steppers or a heater is live
+heater: extruder, heater_bed
+
+[delayed_gcode cooldown]
+# The heater needs a setpoint to keep the 24v PSU online as a "controller_fan"
+# Since this doubles as our hot-end fan power on many common printers 
+# we don't want main power deactivated until there's no longer a risk of heat creep.
+# Targets below 10c are treated as a countdown timer in seconds.
+initial_duration: 0.1
+gcode:
+ {% if printer.extruder.target == 0 and printer.extruder.temperature > 150 %}
+ SET_HEATER_TEMPERATURE HEATER=extruder TARGET=1
+ {% elif printer.extruder.target > 0
+    and printer.extruder.target < 10
+    and printer.extruder.temperature <= 150 %}
+ SET_HEATER_TEMPERATURE HEATER=extruder TARGET={printer.extruder.target-1}
+ {% endif %}
+ UPDATE_DELAYED_GCODE ID=cooldown DURATION=1
+
+[gcode_macro G28]
+rename_existing: C28
+gcode: CUSTOM_G28{' X=X' if params.X is defined}{' Y=Y' if params.Y is defined}{' Z=Z' if params.Z is defined}
+
+# "Enable" a heater by setting it to 2c and wait 2 seconds for PSU warmup before trying to init/move steppers.
+# This is a hack to work around Klipper trying to initialize TMC chips before they have fully powered up.
+[gcode_macro CUSTOM_G28]
+gcode:
+{% if printer.toolhead.homed_axes == '' %}
+{action_respond_info("Powering up steppers...")}
+{% if printer.extruder.target == 0 %}
+SET_HEATER_TEMPERATURE HEATER=extruder TARGET=2
+{% endif %}
+G4 P2000
+{% endif %}
+C28 {params.X|d('')} {params.Y|d('')} {params.Z|d('')}
+
+
+
+
