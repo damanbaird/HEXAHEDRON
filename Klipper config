@@ -1,0 +1,685 @@
+# BIGTREETECH SKR V1.4 LPC1769 (Turbo).
+
+#Mainsail settings
+[include mainsail.cfg]
+
+[exclude_object] 
+
+[skew_correction]
+
+#thermistor NTC10K
+[thermistor barrow10k]
+temperature1: 0.0
+resistance1: 32116.0
+temperature2: 40.0
+resistance2: 5309.0
+temperature3: 80.0
+resistance3: 1228.0
+
+[temperature_sensor Ambient]
+sensor_type: barrow10k
+sensor_pin: P0.23
+
+
+
+[stepper_x]
+step_pin: P2.2
+dir_pin: P2.6
+enable_pin: !P2.1
+microsteps: 32
+rotation_distance: 40.025
+endstop_pin: !P1.29
+position_endstop: 0
+position_min: -15
+position_max: 325
+homing_speed: 70
+
+[tmc2209 stepper_x]
+uart_pin: P1.10
+#tx_pin:
+#select_pins:
+#interpolate: True
+run_current: 0.800
+#hold_current:
+#sense_resistor: 0.110
+#stealthchop_threshold: 0
+
+[stepper_y]
+step_pin: P0.19
+dir_pin: P0.20
+enable_pin: !P2.8
+microsteps: 32
+rotation_distance: 40.025
+endstop_pin: !P1.28
+position_endstop: 300
+position_max: 300
+homing_speed: 70
+homing_positive_dir: True
+
+[tmc2209 stepper_y]
+uart_pin: P1.9
+#tx_pin:
+#select_pins:
+#interpolate: True
+run_current: 0.800
+#hold_current:
+#sense_resistor: 0.110
+#stealthchop_threshold: 0
+
+
+
+
+[stepper_z]
+step_pin: P0.22
+dir_pin: P2.11
+enable_pin: !P0.21
+microsteps: 32
+rotation_distance: 2.0025
+endstop_pin: probe:z_virtual_endstop
+position_min: -5
+position_max: 330
+
+
+[bltouch]
+sensor_pin: P1.27  # Pull-up (^ symbol) needed in open drain mode
+control_pin: P2.0
+pin_up_touch_mode_reports_triggered: True
+x_offset: -26
+y_offset: -18
+#z_offset: 2.25 # larger number = closer to bed
+pin_move_time: 1
+samples_tolerance: .1 #how much of a difference there can be before it triggers a retest, there is a default if you don't specify
+samples_tolerance_retries: 3 #how many times you want it to retry before failing.
+#stow_on_each_sample: False 
+#probe_with_touch_mode: True
+
+[bed_mesh]
+speed: 125
+horizontal_move_z: 5
+mesh_min: 15, 15
+mesh_max: 282, 270
+probe_count: 4, 4
+fade_start: 1
+fade_end: 5
+fade_target: 0
+
+
+[safe_z_home]
+home_xy_position: 177, 150 # Change coordinates to the center of your print bed
+speed: 65
+z_hop: 10               # Move up 10mm
+z_hop_speed: 7
+
+[extruder]
+step_pin: P2.13
+dir_pin: !P0.11
+enable_pin: !P2.12
+microsteps: 16
+full_steps_per_rotation: 200
+rotation_distance: 3.500
+nozzle_diameter: 0.40
+filament_diameter: 1.750
+max_extrude_only_distance: 450
+max_extrude_only_velocity: 20.0
+max_extrude_only_accel: 650.0
+pressure_advance: 0.1
+pressure_advance_smooth_time: 0.02
+heater_pin: P2.7
+sensor_type: EPCOS 100K B57560G104F
+sensor_pin: P0.24
+#control: pid
+#pid_kp: 14.254
+#pid_ki: 0.651
+#pid_kd: 78.038
+min_extrude_temp: 190
+min_temp: 0
+max_temp: 260
+
+
+
+
+
+[verify_heater extruder]
+max_error: 100
+#   The maximum "cumulative temperature error" before raising an
+#   error. Smaller values result in stricter checking and larger
+#   values allow for more time before an error is reported.
+#   Specifically, the temperature is inspected once a second and if it
+#   is close to the target temperature then an internal "error
+#   counter" is reset; otherwise, if the temperature is below the
+#   target range then the counter is increased by the amount the
+#   reported temperature differs from that range. Should the counter
+#   exceed this "max_error" then an error is raised. The default is
+#   120.
+check_gain_time: 10
+#   This controls heater verification during initial heating. Smaller
+#   values result in stricter checking and larger values allow for
+#   more time before an error is reported. Specifically, during
+#   initial heating, as long as the heater increases in temperature
+#   within this time frame (specified in seconds) then the internal
+#   "error counter" is reset. The default is 20 seconds for extruders
+#   and 60 seconds for heater_bed.
+hysteresis: 5
+heating_gain: 2
+
+
+#[extruder1]
+#step_pin: P1.15
+#dir_pin: P1.14
+#enable_pin: !P1.16
+#heater_pin: P2.4
+#sensor_pin: P0.23
+#...
+
+[heater_bed]
+heater_pin: P2.5
+sensor_type: EPCOS 100K B57560G104F
+sensor_pin: P0.25
+#control: pid
+#pid_Kp: 54.027
+#pid_Ki: 0.770
+#pid_Kd: 948.182
+min_temp: 0
+max_temp: 130
+
+[verify_heater heater_bed]
+max_error: 80
+#   The maximum "cumulative temperature error" before raising an
+#   error. Smaller values result in stricter checking and larger
+#   values allow for more time before an error is reported.
+#   Specifically, the temperature is inspected once a second and if it
+#   is close to the target temperature then an internal "error
+#   counter" is reset; otherwise, if the temperature is below the
+#   target range then the counter is increased by the amount the
+#   reported temperature differs from that range. Should the counter
+#   exceed this "max_error" then an error is raised. The default is
+#   120.
+check_gain_time: 30
+#   This controls heater verification during initial heating. Smaller
+#   values result in stricter checking and larger values allow for
+#   more time before an error is reported. Specifically, during
+#   initial heating, as long as the heater increases in temperature
+#   within this time frame (specified in seconds) then the internal
+#   "error counter" is reset. The default is 20 seconds for extruders
+#   and 60 seconds for heater_bed.
+hysteresis: 5
+heating_gain: 2
+
+[gcode_arcs]
+resolution: 0.5
+#   An arc will be split into segments. Each segment's length will
+#   equal the resolution in mm set above. Lower values will produce a
+#   finer arc, but also more work for your machine. Arcs smaller than
+#   the configured value will become straight lines. The default is
+#   1mm.
+
+[fan]
+pin: P2.3
+
+#[heater_fan hotend_cooling]
+#pin:
+#max_power:
+#shutdown_speed:
+#cycle_time:
+#hardware_pwm:
+#kick_start_time:
+#off_below:
+#tachometer_pin:
+#tachometer_ppr:
+#tachometer_poll_interval:
+#enable_pin:
+#   See the "fan" section for a description of the above parameters.
+#heater: extruder
+#   Name of the config section defining the heater that this fan is
+#   associated with. If a comma separated list of heater names is
+#   provided here, then the fan will be enabled when any of the given
+#   heaters are enabled. The default is "extruder".
+#heater_temp: 50.0
+#   A temperature (in Celsius) that the heater must drop below before
+#   the fan is disabled. The default is 50 Celsius.
+#fan_speed: 1.0
+#   The fan speed (expressed as a value from 0.0 to 1.0) that the fan
+#   will be set to when its associated heater is enabled. The default
+#   is 1.0
+
+
+
+[idle_timeout]
+timeout: 90
+gcode:
+   TURN_OFF_HEATERS
+   M84
+   PRINT_END
+
+
+[mcu]
+serial: /dev/serial/by-id/usb-Klipper_lpc1769_1120001347084AAFDEE16C5DC52000F5-if00
+
+[mcu rpi]
+serial: /tmp/klipper_host_mcu
+
+[adxl345]
+cs_pin: rpi:None
+spi_speed: 5000000
+rate: 3200
+
+[resonance_tester]
+accel_chip: adxl345
+accel_per_hz: 60
+probe_points: 165, 150, 20
+min_freq: 5
+max_freq: 133.33
+
+
+[temperature_sensor CPU]
+sensor_type: temperature_host
+min_temp: 10
+max_temp: 85
+
+
+
+[printer]
+kinematics: corexy
+max_velocity: 300
+max_accel: 3000
+max_z_velocity: 10
+max_z_accel: 8
+square_corner_velocity: 7
+
+
+[gcode_macro POWER_ON_PRINTER]
+gcode:
+  {action_call_remote_method("set_device_power",
+                             device="printer",
+                             state="on")}
+   G28 X 
+   M84
+
+
+[gcode_macro M80]
+gcode:
+  # Moonraker action
+  {action_call_remote_method('set_device_power',
+                             device='printer',
+                             state='on')}
+
+[gcode_macro M81]
+gcode:
+   TURN_OFF_HEATERS
+   M84
+  {action_call_remote_method("set_device_power",
+                             device="printer",
+                             state="off")}
+
+
+
+[gcode_macro POWER_OFF_PRINTER]
+gcode:
+   TURN_OFF_HEATERS
+   M84
+    {action_call_remote_method("set_device_power",
+                             device="printer",
+                             state="off")}
+
+[gcode_macro Cancel]
+gcode:
+  G91
+  G1 Z5 E-5 
+  G28 X0 Y0
+  TURN_OFF_HEATERS
+   M84
+   PRINT_END  
+  
+[virtual_sdcard]
+path: /home/pi/printer_data/gcodes
+
+
+
+[delayed_gcode POWER_OFF_PRINTER_CHECK]
+gcode:
+  {% if printer.idle_timeout.state == "Idle" or printer.idle_timeout.state == "Ready" %}
+    {% if printer.extruder.temperature < 50.0 and printer.heater_bed.temperature < 50.0 %}
+        {% if printer.extruder.target == 0.0 and printer.heater_bed.target == 0.0 %}
+            UPDATE_DELAYED_GCODE ID=POWER_OFF_PRINTER_CHECK DURATION=0
+            POWER_OFF_PRINTER
+        {% else %}
+            UPDATE_DELAYED_GCODE ID=POWER_OFF_PRINTER_CHECK DURATION=2
+        {% endif %}
+    {% else %}
+        {% if printer.idle_timeout.state == "Printing" %}
+            UPDATE_DELAYED_GCODE ID=POWER_OFF_PRINTER_CHECK DURATION=0
+            {% else %}
+            {% if printer.extruder.target == 0.0 and printer.heater_bed.target == 0.0 %}
+                UPDATE_DELAYED_GCODE ID=POWER_OFF_PRINTER_CHECK DURATION=2
+            {% else %}
+                UPDATE_DELAYED_GCODE ID=POWER_OFF_PRINTER_CHECK DURATION=0
+              {% endif %}
+        {% endif %}
+    {% endif %}
+  {% endif %}
+
+
+[gcode_macro PRINT_END]
+gcode:
+ UPDATE_DELAYED_GCODE ID=POWER_OFF_PRINTER_CHECK DURATION=10
+
+
+[gcode_macro G28]
+rename_existing: C28
+gcode: 
+  M80
+  C28{' X=X' if params.X is defined}{' Y=Y' if params.Y is defined}{' Z=Z' if params.Z is defined} 
+
+[gcode_macro G29]
+gcode:
+  G28
+  BED_MESH_CLEAR
+  BED_MESH_CALIBRATE
+  SAVE_CONFIG
+
+[gcode_macro BED_PROFILE]
+gcode:
+  BED_MESH_PROFILE LOAD=default
+  SKEW_PROFILE LOAD=my_skew_profile
+
+[gcode_macro END_PRINT]
+gcode:
+  G91
+  G1 Z5 E-5
+  G28 X0 Y0
+  M104 S0
+  M140 S0
+  M84
+  PRINT_END
+
+#Resonance Compensation
+[gcode_macro SHAPER]
+gcode:
+  M80
+  G28
+  SHAPER_CALIBRATE
+  SAVE_CONFIG
+
+#PROBE CALIBRATE
+[gcode_macro CALIBRATE_Z]
+gcode:
+  G28
+  PROBE_CALIBRATE
+
+[gcode_macro LOAD]
+gcode:
+  M80
+  M109 S230
+  M117  LOADING...
+  G91
+  G1 E100 F750
+  G90
+
+[gcode_macro UNLOAD]
+gcode:
+  M80
+  M109 S230
+  G91
+  G1 E-100 F750
+  G90
+
+
+
+#[duplicate_pin_override]
+  
+##############################################################################################
+
+
+[gcode_macro BED_MESH_CALIBRATE]
+rename_existing: BED_MESH_CALIBRATE_BASE
+; gcode parameters
+variable_parameter_AREA_START : 0,0
+variable_parameter_AREA_END : 0,0
+; the clearance between print area and probe area 
+variable_mesh_area_offset : 5.0
+; number of sample per probe point
+variable_probe_samples : 2
+; minimum probe count
+variable_min_probe_count : 3
+; scale up the probe count, should be 1.0 ~ < variable_max_probe_count/variable_min_probe_count
+variable_probe_count_scale_factor : 1.0
+gcode:
+    {% if params.AREA_START and params.AREA_END %}
+        {% set bedMeshConfig = printer["configfile"].config["bed_mesh"] %}
+        {% set safe_min_x = bedMeshConfig.mesh_min.split(",")[0]|float %}
+        {% set safe_min_y = bedMeshConfig.mesh_min.split(",")[1]|float %}
+        {% set safe_max_x = bedMeshConfig.mesh_max.split(",")[0]|float %}
+        {% set safe_max_y = bedMeshConfig.mesh_max.split(",")[1]|float %}
+
+        {% set area_min_x = params.AREA_START.split(",")[0]|float %}
+	{% set area_min_y = params.AREA_START.split(",")[1]|float %}
+	{% set area_max_x = params.AREA_END.split(",")[0]|float %}
+	{% set area_max_y = params.AREA_END.split(",")[1]|float %}
+
+        {% set meshPointX = bedMeshConfig.probe_count.split(",")[0]|int %}
+        {% set meshPointY = bedMeshConfig.probe_count.split(",")[1]|int %}
+	
+	{% set meshMaxPointX = meshPointX %}
+	{% set meshMaxPointY = meshPointY %}
+
+
+        {% if (area_min_x < area_max_x) and (area_min_y < area_max_y) %}
+            {% if area_min_x - mesh_area_offset >=  safe_min_x %}
+                {% set area_min_x = area_min_x - mesh_area_offset %}
+            {% else %}
+                {% set area_min_x = safe_min_x %}
+            {% endif %}
+
+            {% if area_min_y - mesh_area_offset >=  safe_min_y %}
+                {% set area_min_y = area_min_y - mesh_area_offset %}
+            {% else %}
+                {% set area_min_y = safe_min_y %}
+            {% endif %}
+
+            {% if area_max_x + mesh_area_offset <=  safe_max_x %}
+                {% set area_max_x = area_max_x + mesh_area_offset %}
+            {% else %}
+                {% set area_max_x = safe_max_x %}
+            {% endif %}
+
+            {% if area_max_y + mesh_area_offset <=  safe_max_y %}
+                {% set area_max_y = area_max_y + mesh_area_offset %}
+            {% else %}
+                {% set area_max_y = safe_max_y %}
+            {% endif %}
+
+            {% set meshPointX = (meshPointX * (area_max_x - area_min_x) / (safe_max_x - safe_min_x) * probe_count_scale_factor)|round(0)|int %}
+            {% if meshPointX < min_probe_count %}
+                {% set meshPointX = min_probe_count %}
+            {% endif %}
+	    {% if meshPointX > meshMaxPointX %}
+                {% set meshPointX = meshMaxPointX %}
+            {% endif %}
+
+            {% set meshPointY = (meshPointY * (area_max_y -area_min_y ) / (safe_max_y - safe_min_y) * probe_count_scale_factor )|round(0)|int %}
+            {% if meshPointY < min_probe_count %}
+                {% set meshPointY = min_probe_count %}
+            {% endif %}
+	    {% if meshPointY > meshMaxPointY %}
+                {% set meshPointY = meshMaxPointY %}
+            {% endif %}
+
+            BED_MESH_CALIBRATE_BASE mesh_min={area_min_x},{area_min_y} mesh_max={area_max_x},{area_max_y} probe_count={meshPointX},{meshPointY} samples={probe_samples|int}
+        {% else %}
+            BED_MESH_CALIBRATE_BASE
+        {% endif %}
+    {% else %}
+        BED_MESH_CALIBRATE_BASE
+    {% endif %}
+
+#########################################################################################################
+
+[pause_resume]
+
+[display_status]
+
+[gcode_macro CANCEL_PRINT]
+description: Cancel the actual running print
+rename_existing: CANCEL_PRINT_BASE
+variable_park: True
+gcode:
+  M84
+  ## Move head and retract only if not already in the pause state and park set to true
+  {% if printer.pause_resume.is_paused|lower == 'false' and park|lower == 'true'%}
+    _TOOLHEAD_PARK_PAUSE_CANCEL
+  {% endif %}
+  TURN_OFF_HEATERS
+  M106 S0
+  CANCEL_PRINT_BASE
+
+[gcode_macro PAUSE]
+description: Pause the actual running print
+rename_existing: PAUSE_BASE
+gcode:
+  PAUSE_BASE
+  _TOOLHEAD_PARK_PAUSE_CANCEL
+
+[gcode_macro RESUME]
+description: Resume the actual running print
+rename_existing: RESUME_BASE
+gcode:
+  ##### read extrude from  _TOOLHEAD_PARK_PAUSE_CANCEL  macro #####
+  {% set extrude = printer['gcode_macro _TOOLHEAD_PARK_PAUSE_CANCEL'].extrude %}
+  #### get VELOCITY parameter if specified ####
+  {% if 'VELOCITY' in params|upper %}
+    {% set get_params = ('VELOCITY=' + params.VELOCITY)  %}
+  {%else %}
+    {% set get_params = "" %}
+  {% endif %}
+  ##### end of definitions #####
+  {% if printer.extruder.can_extrude|lower == 'true' %}
+    M83
+    G1 E{extrude} F2100
+    {% if printer.gcode_move.absolute_extrude |lower == 'true' %} M82 {% endif %}
+  {% else %}
+    {action_respond_info("Extruder not hot enough")}
+  {% endif %}
+  RESUME_BASE {get_params}
+
+[gcode_macro _TOOLHEAD_PARK_PAUSE_CANCEL]
+description: Helper: park toolhead used in PAUSE and CANCEL_PRINT
+variable_extrude: 1.0
+gcode:
+  ##### set park positon for x and y #####
+  # default is your max posion from your printer.cfg
+  {% set x_park = printer.toolhead.axis_maximum.x|float - 5.0 %}
+  {% set y_park = printer.toolhead.axis_maximum.y|float - 5.0 %}
+  {% set z_park_delta = 2.0 %}
+  ##### calculate save lift position #####
+  {% set max_z = printer.toolhead.axis_maximum.z|float %}
+  {% set act_z = printer.toolhead.position.z|float %}
+  {% if act_z < (max_z - z_park_delta) %}
+    {% set z_safe = z_park_delta %}
+  {% else %}
+    {% set z_safe = max_z - act_z %}
+  {% endif %}
+  ##### end of definitions #####
+  {% if printer.extruder.can_extrude|lower == 'true' %}
+    M83
+    G1 E-{extrude} F2100
+    {% if printer.gcode_move.absolute_extrude |lower == 'true' %} M82 {% endif %}
+  {% else %}
+    {action_respond_info("Extruder not hot enough")}
+  {% endif %}
+  {% if "xyz" in printer.toolhead.homed_axes %}
+    G91
+    G1 Z{z_safe} F500
+    G90
+    G1 X{x_park} Y{y_park} F6000
+    {% if printer.gcode_move.absolute_coordinates|lower == 'false' %} G91 {% endif %}
+  {% else %}
+    {action_respond_info("Printer not homed")}
+  {% endif %}
+
+
+[gcode_macro M600]
+gcode:
+  {% set default_x = printer.toolhead.axis_minimum.x + 20 %}
+  {% set default_y = printer.toolhead.axis_minimum.y + 20 %}
+  {% set default_e = 100 %}
+
+  {% if 'save_variables' in printer %}
+    {% set svv = printer.save_variables.variables %}
+    {% if 'park_x' in svv %}
+      {% set default_x = svv.park_x %}
+    {% endif %}
+    {% if 'park_y' in svv %}
+      {% set default_y = svv.park_y %}
+    {% endif %}
+    {% if 'bowden_len' in svv %}
+      {% set default_e = svv.bowden_len %}
+    {% endif %}
+  {% endif %}
+
+  {% set x = params.X|default(default_x)|float %}
+  {% set y = params.Y|default(default_y)|float %}
+  {% set z = params.Z|default(20)|float %}
+  {% set e = params.E|default(default_e)|float %}
+
+  {% if printer.pause_resume.is_paused %}
+    {action_respond_info("Already paused")}
+  {% elif printer.toolhead.homed_axes != "xyz" %}
+    {action_respond_info("Please home XYZ first")}
+  {% else %}
+    PAUSE_PARK X={x} Y={y} Z={z}
+    M702 U{e}
+  {% endif %}
+
+
+
+
+
+
+#########################################################################################################3
+
+#*# <---------------------- SAVE_CONFIG ---------------------->
+#*# DO NOT EDIT THIS BLOCK OR BELOW. The contents are auto-generated.
+#*#
+#*# [skew_correction my_skew_profile]
+#*# xy_skew = -0.016950736830603847
+#*# xz_skew = 0.0
+#*# yz_skew = 0.0
+#*#
+#*# [bltouch]
+#*# z_offset = 2.885
+#*#
+#*# [bed_mesh default]
+#*# version = 1
+#*# points =
+#*# 	  -1.443052, -1.020336, -0.796307, -0.799436
+#*# 	  -0.919898, -0.435231, -0.148623, -0.062265
+#*# 	  -0.562577, 0.065707, 0.541927, 0.706194
+#*# 	  -0.459949, 0.583854, 1.178346, 1.484666
+#*# x_count = 4
+#*# y_count = 4
+#*# mesh_x_pps = 2
+#*# mesh_y_pps = 2
+#*# algo = lagrange
+#*# tension = 0.2
+#*# min_x = 15.0
+#*# max_x = 282.0
+#*# min_y = 15.0
+#*# max_y = 270.0
+#*#
+#*# [input_shaper]
+#*# shaper_type_x = 3hump_ei
+#*# shaper_freq_x = 76.6
+#*# shaper_type_y = ei
+#*# shaper_freq_y = 55.8
+#*#
+#*# [heater_bed]
+#*# control = pid
+#*# pid_kp = 71.114
+#*# pid_ki = 1.235
+#*# pid_kd = 1024.042
+#*#
+#*# [extruder]
+#*# control = pid
+#*# pid_kp = 14.245
+#*# pid_ki = 0.555
+#*# pid_kd = 91.348
